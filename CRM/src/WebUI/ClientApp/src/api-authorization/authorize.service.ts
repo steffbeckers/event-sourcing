@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { User, UserManager, WebStorageStateStore } from 'oidc-client';
 import { BehaviorSubject, concat, from, Observable } from 'rxjs';
 import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
-import { ApplicationPaths, ApplicationName } from './api-authorization.constants';
+import {
+  ApplicationPaths,
+  ApplicationName,
+} from './api-authorization.constants';
 
 export type IAuthenticationResult =
-  SuccessAuthenticationResult |
-  FailureAuthenticationResult |
-  RedirectAuthenticationResult;
+  | SuccessAuthenticationResult
+  | FailureAuthenticationResult
+  | RedirectAuthenticationResult;
 
 export interface SuccessAuthenticationResult {
   status: AuthenticationResultStatus.Success;
@@ -26,7 +29,7 @@ export interface RedirectAuthenticationResult {
 export enum AuthenticationResultStatus {
   Success,
   Redirect,
-  Fail
+  Fail,
 }
 
 export interface IUser {
@@ -34,7 +37,7 @@ export interface IUser {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthorizeService {
   // By default pop ups are disabled because they don't work properly on Edge.
@@ -42,23 +45,33 @@ export class AuthorizeService {
 
   private popUpDisabled = true;
   private userManager: UserManager;
-  private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject(null);
+  private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject(
+    null
+  );
 
   public isAuthenticated(): Observable<boolean> {
-    return this.getUser().pipe(map(u => !!u));
+    return this.getUser().pipe(map((u) => !!u));
   }
 
   public getUser(): Observable<IUser | null> {
     return concat(
-      this.userSubject.pipe(take(1), filter(u => !!u)),
-      this.getUserFromStorage().pipe(filter(u => !!u), tap(u => this.userSubject.next(u))),
-      this.userSubject.asObservable());
+      this.userSubject.pipe(
+        take(1),
+        filter((u) => !!u)
+      ),
+      this.getUserFromStorage().pipe(
+        filter((u) => !!u),
+        tap((u) => this.userSubject.next(u))
+      ),
+      this.userSubject.asObservable()
+    );
   }
 
   public getAccessToken(): Observable<string> {
-    return from(this.ensureUserManagerInitialized())
-      .pipe(mergeMap(() => from(this.userManager.getUser())),
-        map(user => user && user.access_token));
+    return from(this.ensureUserManagerInitialized()).pipe(
+      mergeMap(() => from(this.userManager.getUser())),
+      map((user) => user && user.access_token)
+    );
   }
 
   // We try to authenticate the user in three different ways:
@@ -82,7 +95,9 @@ export class AuthorizeService {
 
       try {
         if (this.popUpDisabled) {
-          throw new Error('Popup disabled. Change \'authorize.service.ts:AuthorizeService.popupDisabled\' to false to enable it.');
+          throw new Error(
+            "Popup disabled. Change 'authorize.service.ts:AuthorizeService.popupDisabled' to false to enable it."
+          );
         }
         user = await this.userManager.signinPopup(this.createArguments());
         this.userSubject.next(user.profile);
@@ -122,7 +137,9 @@ export class AuthorizeService {
   public async signOut(state: any): Promise<IAuthenticationResult> {
     try {
       if (this.popUpDisabled) {
-        throw new Error('Popup disabled. Change \'authorize.service.ts:AuthorizeService.popupDisabled\' to false to enable it.');
+        throw new Error(
+          "Popup disabled. Change 'authorize.service.ts:AuthorizeService.popupDisabled' to false to enable it."
+        );
       }
 
       await this.ensureUserManagerInitialized();
@@ -174,7 +191,9 @@ export class AuthorizeService {
       return;
     }
 
-    const response = await fetch(ApplicationPaths.ApiAuthorizationClientConfigurationUrl);
+    const response = await fetch(
+      ApplicationPaths.ApiAuthorizationClientConfigurationUrl
+    );
     if (!response.ok) {
       throw new Error(`Could not load settings for '${ApplicationName}'`);
     }
@@ -191,9 +210,9 @@ export class AuthorizeService {
   }
 
   private getUserFromStorage(): Observable<IUser> {
-    return from(this.ensureUserManagerInitialized())
-      .pipe(
-        mergeMap(() => this.userManager.getUser()),
-        map(u => u && u.profile));
+    return from(this.ensureUserManagerInitialized()).pipe(
+      mergeMap(() => this.userManager.getUser()),
+      map((u) => u && u.profile)
+    );
   }
 }

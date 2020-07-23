@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
-import { WeatherForecastClient, WeatherForecast } from "../crm-api";
+import { WeatherForecastClient, WeatherForecast } from '../crm-api';
 
 @Component({
   selector: 'app-fetch-data',
-  templateUrl: './fetch-data.component.html'
+  templateUrl: './fetch-data.component.html',
 })
 export class FetchDataComponent {
   public forecasts: WeatherForecast[];
 
   constructor(private client: WeatherForecastClient) {
-    client.get().subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+    client.get().subscribe(
+      (result) => {
+        this.forecasts = result;
+      },
+      (error) => console.error(error)
+    );
   }
 }

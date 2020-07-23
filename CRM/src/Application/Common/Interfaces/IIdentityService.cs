@@ -9,8 +9,6 @@ namespace CRM.Application.Common.Interfaces
 
         Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password);
 
-        Task<Result> SendEmailConfirmationAsync(string userId);
-
         Task<Result> DeleteUserAsync(string userId);
     }
 }

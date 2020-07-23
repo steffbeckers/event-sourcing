@@ -36,18 +36,6 @@ namespace CRM.Infrastructure.Identity
             return (result.ToApplicationResult(), user.Id);
         }
 
-        public async Task<Result> SendEmailConfirmationAsync(string userId)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
-
-            if (user != null)
-            {
-                return Result.Failure(new string[] { "User " });
-            }
-
-            return Result.Success();
-        }
-
         public async Task<Result> DeleteUserAsync(string userId)
         {
             var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
