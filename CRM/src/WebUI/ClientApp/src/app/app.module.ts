@@ -17,6 +17,12 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AppRoutingModule } from './app-routing.module';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
+import { EffectsModule } from '@ngrx/effects';
+import { AppEffects } from './store/effects/app.effects';
 
 @NgModule({
   declarations: [
@@ -36,6 +42,15 @@ import { AppRoutingModule } from './app-routing.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     ModalModule.forRoot(),
+    StoreModule.forRoot(reducers, {
+      metaReducers, 
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+      }
+    }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
+    EffectsModule.forRoot([AppEffects]),
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
