@@ -48,17 +48,10 @@
         </button>
       </div>
       <ul id="todo-items" class="list-group mb-2">
-        <li
-          class="list-group-item"
-          *ngFor="let item of selectedList.items; index as i"
-        >
+        <li class="list-group-item" *ngFor="let item of selectedList.items; index as i">
           <div class="d-flex">
             <div class="todo-item-checkbox">
-              <input
-                type="checkbox"
-                [(ngModel)]="item.done"
-                (change)="updateItem(item)"
-              />
+              <input type="checkbox" [(ngModel)]="item.done" (change)="updateItem(item)" />
             </div>
             <div class="flex-fill">
               <input
@@ -108,12 +101,7 @@
 <ng-template #listOptionsModalTemplate>
   <div class="modal-header clearfix">
     <h4 class="modal-title float-left">List Options</h4>
-    <button
-      type="button"
-      class="close float-right"
-      aria-label="Close"
-      (click)="listOptionsModalRef.hide()"
-    >
+    <button type="button" class="close float-right" aria-label="Close" (click)="listOptionsModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -136,10 +124,7 @@
   <div class="modal-footer">
     <div class="clearfix">
       <div class="float-left">
-        <button
-          class="btn btn-default text-danger"
-          (click)="confirmDeleteList(deleteListModalTemplate)"
-        >
+        <button class="btn btn-default text-danger" (click)="confirmDeleteList(deleteListModalTemplate)">
           Delete
         </button>
       </div>
@@ -158,12 +143,7 @@
 <ng-template #itemDetailsModalTemplate>
   <div class="modal-header clearfix">
     <h4 class="modal-title float-left">Item Details</h4>
-    <button
-      type="button"
-      class="close float-right"
-      aria-label="Close"
-      (click)="itemDetailsModalRef.hide()"
-    >
+    <button type="button" class="close float-right" aria-label="Close" (click)="itemDetailsModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -172,29 +152,18 @@
       <div class="form-group">
         <label for="list">List</label>
         <select class="form-control" [(ngModel)]="itemDetailsEditor.listId">
-          <option [ngValue]="list.id" *ngFor="let list of vm.lists">{{
-            list.title
-          }}</option>
+          <option [ngValue]="list.id" *ngFor="let list of vm.lists">{{ list.title }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="priority">Priority</label>
         <select class="form-control" [(ngModel)]="itemDetailsEditor.priority">
-          <option
-            [ngValue]="level.value"
-            *ngFor="let level of vm.priorityLevels"
-            >{{ level.name }}</option
-          >
+          <option [ngValue]="level.value" *ngFor="let level of vm.priorityLevels">{{ level.name }}</option>
         </select>
       </div>
       <div class="form-group">
         <label for="note">Note</label>
-        <textarea
-          id="note"
-          class="form-control"
-          rows="3"
-          [(ngModel)]="itemDetailsEditor.note"
-        ></textarea>
+        <textarea id="note" class="form-control" rows="3" [(ngModel)]="itemDetailsEditor.note"></textarea>
       </div>
     </div>
     <div *ngIf="debug">
@@ -204,10 +173,7 @@
   <div class="modal-footer">
     <div class="clearfix">
       <div class="float-left">
-        <button
-          class="btn btn-default text-danger"
-          (click)="deleteItem(selectedItem)"
-        >
+        <button class="btn btn-default text-danger" (click)="deleteItem(selectedItem)">
           Delete
         </button>
       </div>
@@ -226,12 +192,7 @@
 <ng-template #deleteListModalTemplate>
   <div class="modal-header clearfix">
     <h4 class="modal-title float-left">Delete "{{ selectedList?.title }}"?</h4>
-    <button
-      type="button"
-      class="close float-right"
-      aria-label="Close"
-      (click)="deleteListModalRef.hide()"
-    >
+    <button type="button" class="close float-right" aria-label="Close" (click)="deleteListModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -243,18 +204,10 @@
   </div>
   <div class="modal-footer">
     <div class="text-right">
-      <button
-        type="button"
-        class="btn btn-default"
-        (click)="deleteListModalRef.hide()"
-      >
+      <button type="button" class="btn btn-default" (click)="deleteListModalRef.hide()">
         Cancel
       </button>
-      <button
-        type="button"
-        class="btn btn-danger"
-        (click)="deleteListConfirmed()"
-      >
+      <button type="button" class="btn btn-danger" (click)="deleteListConfirmed()">
         Delete
       </button>
     </div>
@@ -264,12 +217,7 @@
 <ng-template #newListModalTemplate>
   <div class="modal-header clearfix">
     <h4 class="modal-title float-left">New List</h4>
-    <button
-      type="button"
-      class="close float-right"
-      aria-label="Close"
-      (click)="newListCancelled()"
-    >
+    <button type="button" class="close float-right" aria-label="Close" (click)="newListCancelled()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>

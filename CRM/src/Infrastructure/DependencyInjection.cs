@@ -33,6 +33,8 @@ namespace CRM.Infrastructure
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<EmailSenderAuthOptions>(configuration);
 

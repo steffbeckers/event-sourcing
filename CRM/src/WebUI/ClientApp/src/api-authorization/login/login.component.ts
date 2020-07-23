@@ -1,16 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AuthorizeService,
-  AuthenticationResultStatus,
-} from '../authorize.service';
+import { AuthorizeService, AuthenticationResultStatus } from '../authorize.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import {
-  LoginActions,
-  QueryParameterNames,
-  ApplicationPaths,
-  ReturnUrlType,
-} from '../api-authorization.constants';
+import { LoginActions, QueryParameterNames, ApplicationPaths, ReturnUrlType } from '../api-authorization.constants';
 
 // The main responsibility of this component is to handle the user's login process.
 // This is the starting point for the login process. Any component that needs to authenticate
@@ -40,9 +32,7 @@ export class LoginComponent implements OnInit {
         await this.processLoginCallback();
         break;
       case LoginActions.LoginFailed:
-        const message = this.activatedRoute.snapshot.queryParamMap.get(
-          QueryParameterNames.Message
-        );
+        const message = this.activatedRoute.snapshot.queryParamMap.get(QueryParameterNames.Message);
         this.message.next(message);
         break;
       case LoginActions.Profile:
@@ -94,9 +84,7 @@ export class LoginComponent implements OnInit {
 
   private redirectToRegister(): any {
     this.redirectToApiAuthorizationPath(
-      `${ApplicationPaths.IdentityRegisterPath}?returnUrl=${encodeURI(
-        '/' + ApplicationPaths.Login
-      )}`
+      `${ApplicationPaths.IdentityRegisterPath}?returnUrl=${encodeURI('/' + ApplicationPaths.Login)}`
     );
   }
 
@@ -113,27 +101,14 @@ export class LoginComponent implements OnInit {
   }
 
   private getReturnUrl(state?: INavigationState): string {
-    const fromQuery = (this.activatedRoute.snapshot
-      .queryParams as INavigationState).returnUrl;
+    const fromQuery = (this.activatedRoute.snapshot.queryParams as INavigationState).returnUrl;
     // If the url is comming from the query string, check that is either
     // a relative url or an absolute url
-    if (
-      fromQuery &&
-      !(
-        fromQuery.startsWith(`${window.location.origin}/`) ||
-        /\/[^\/].*/.test(fromQuery)
-      )
-    ) {
+    if (fromQuery && !(fromQuery.startsWith(`${window.location.origin}/`) || /\/[^\/].*/.test(fromQuery))) {
       // This is an extra check to prevent open redirects.
-      throw new Error(
-        'Invalid return url. The return url needs to have the same origin as the current page.'
-      );
+      throw new Error('Invalid return url. The return url needs to have the same origin as the current page.');
     }
-    return (
-      (state && state.returnUrl) ||
-      fromQuery ||
-      ApplicationPaths.DefaultLoginRedirectPath
-    );
+    return (state && state.returnUrl) || fromQuery || ApplicationPaths.DefaultLoginRedirectPath;
   }
 
   private redirectToApiAuthorizationPath(apiAuthorizationPath: string) {

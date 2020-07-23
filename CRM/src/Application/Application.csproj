@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Mappings\" />
+    <Folder Include="Accounts\Queries\" />
   </ItemGroup>
 
 </Project>

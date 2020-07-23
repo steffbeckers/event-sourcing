@@ -28,7 +28,7 @@ namespace CRM.WebUI
                     if (context.Database.IsSqlServer())
                     {
                         context.Database.Migrate();
-                    }                   
+                    }
 
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 

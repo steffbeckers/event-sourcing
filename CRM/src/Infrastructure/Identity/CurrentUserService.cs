@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace CRM.WebUI.Services
+namespace CRM.Infrastructure.Identity
 {
     public class CurrentUserService : ICurrentUserService
     {

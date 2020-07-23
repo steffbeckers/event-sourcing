@@ -30,8 +30,10 @@ namespace CRM.Infrastructure.Persistence
             _dateTime = dateTime;
         }
 
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<AccountContact> AccountContact { get; set; }
         public DbSet<TodoList> TodoLists { get; set; }
-
         public DbSet<TodoItem> TodoItems { get; set; }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

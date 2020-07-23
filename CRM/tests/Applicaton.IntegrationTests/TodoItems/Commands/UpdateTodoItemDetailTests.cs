@@ -6,9 +6,9 @@ using CRM.Application.TodoLists.Commands.CreateTodoList;
 using CRM.Domain.Entities;
 using CRM.Domain.Enums;
 using FluentAssertions;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace CRM.Application.IntegrationTests.TodoItems.Commands
 {

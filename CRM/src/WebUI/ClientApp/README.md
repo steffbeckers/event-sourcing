@@ -13,3 +13,8 @@ https://ngrx.io/guide/schematics
 `ng generate @ngrx/schematics:effect store/App --root --module app.module.ts --group`
 
 `ng generate module dashboard --route dashboard --module app.module.ts`
+
+`ng generate module accounts --route accounts --module app.module.ts`
+`ng generate component accounts/accounts-list --module accounts/accounts.module.ts`
+`ng generate component accounts/account-detail --module accounts/accounts.module.ts`
+`ng generate component accounts/account-edit --module accounts/accounts.module.ts`

@@ -77,26 +77,24 @@ export class TodoComponent {
       items: [],
     });
 
-    this.listsClient
-      .create(<CreateTodoListCommand>{ title: this.newListEditor.title })
-      .subscribe(
-        (result) => {
-          list.id = result;
-          this.vm.lists.push(list);
-          this.selectedList = list;
-          this.newListModalRef.hide();
-          this.newListEditor = {};
-        },
-        (error) => {
-          let errors = JSON.parse(error.response);
+    this.listsClient.create(<CreateTodoListCommand>{ title: this.newListEditor.title }).subscribe(
+      (result) => {
+        list.id = result;
+        this.vm.lists.push(list);
+        this.selectedList = list;
+        this.newListModalRef.hide();
+        this.newListEditor = {};
+      },
+      (error) => {
+        let errors = JSON.parse(error.response);
 
-          if (errors && errors.Title) {
-            this.newListEditor.error = errors.Title[0];
-          }
-
-          setTimeout(() => document.getElementById('title').focus(), 250);
+        if (errors && errors.Title) {
+          this.newListEditor.error = errors.Title[0];
         }
-      );
+
+        setTimeout(() => document.getElementById('title').focus(), 250);
+      }
+    );
   }
 
   showListOptionsModal(template: TemplateRef<any>) {
@@ -109,19 +107,13 @@ export class TodoComponent {
   }
 
   updateListOptions() {
-    this.listsClient
-      .update(
-        this.selectedList.id,
-        UpdateTodoListCommand.fromJS(this.listOptionsEditor)
-      )
-      .subscribe(
-        () => {
-          (this.selectedList.title = this.listOptionsEditor.title),
-            this.listOptionsModalRef.hide();
-          this.listOptionsEditor = {};
-        },
-        (error) => console.error(error)
-      );
+    this.listsClient.update(this.selectedList.id, UpdateTodoListCommand.fromJS(this.listOptionsEditor)).subscribe(
+      () => {
+        (this.selectedList.title = this.listOptionsEditor.title), this.listOptionsModalRef.hide();
+        this.listOptionsEditor = {};
+      },
+      (error) => console.error(error)
+    );
   }
 
   confirmDeleteList(template: TemplateRef<any>) {
@@ -133,9 +125,7 @@ export class TodoComponent {
     this.listsClient.delete(this.selectedList.id).subscribe(
       () => {
         this.deleteListModalRef.hide();
-        this.vm.lists = this.vm.lists.filter(
-          (t) => t.id != this.selectedList.id
-        );
+        this.vm.lists = this.vm.lists.filter((t) => t.id != this.selectedList.id);
         this.selectedList = this.vm.lists.length ? this.vm.lists[0] : null;
       },
       (error) => console.error(error)
@@ -155,19 +145,12 @@ export class TodoComponent {
 
   updateItemDetails(): void {
     this.itemsClient
-      .updateItemDetails(
-        this.selectedItem.id,
-        UpdateTodoItemDetailCommand.fromJS(this.itemDetailsEditor)
-      )
+      .updateItemDetails(this.selectedItem.id, UpdateTodoItemDetailCommand.fromJS(this.itemDetailsEditor))
       .subscribe(
         () => {
           if (this.selectedItem.listId != this.itemDetailsEditor.listId) {
-            this.selectedList.items = this.selectedList.items.filter(
-              (i) => i.id != this.selectedItem.id
-            );
-            let listIndex = this.vm.lists.findIndex(
-              (l) => l.id == this.itemDetailsEditor.listId
-            );
+            this.selectedList.items = this.selectedList.items.filter((i) => i.id != this.selectedItem.id);
+            let listIndex = this.vm.lists.findIndex((l) => l.id == this.itemDetailsEditor.listId);
             this.selectedItem.listId = this.itemDetailsEditor.listId;
             this.vm.lists[listIndex].items.push(this.selectedItem);
           }
@@ -225,10 +208,7 @@ export class TodoComponent {
     } else {
       this.itemsClient
         .update(item.id, UpdateTodoItemCommand.fromJS(item))
-        .subscribe(
-          () => console.log('Update succeeded.'),
-          (error) => console.error(error)
-        );
+        .subscribe(() => console.log('Update succeeded.'), (error) => console.error(error));
     }
 
     this.selectedItem = null;
@@ -251,10 +231,7 @@ export class TodoComponent {
       this.itemsClient
         .delete(item.id)
         .subscribe(
-          () =>
-            (this.selectedList.items = this.selectedList.items.filter(
-              (t) => t.id != item.id
-            )),
+          () => (this.selectedList.items = this.selectedList.items.filter((t) => t.id != item.id)),
           (error) => console.error(error)
         );
     }

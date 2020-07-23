@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using FluentValidation;
+using MediatR;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
-using MediatR;
 using ValidationException = CRM.Application.Common.Exceptions.ValidationException;
 
 namespace CRM.Application.Common.Behaviours

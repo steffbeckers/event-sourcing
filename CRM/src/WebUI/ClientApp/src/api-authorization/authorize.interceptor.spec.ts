@@ -9,10 +9,7 @@ describe('AuthorizeInterceptor', () => {
     });
   });
 
-  it('should be created', inject(
-    [AuthorizeInterceptor],
-    (service: AuthorizeInterceptor) => {
-      expect(service).toBeTruthy();
-    }
-  ));
+  it('should be created', inject([AuthorizeInterceptor], (service: AuthorizeInterceptor) => {
+    expect(service).toBeTruthy();
+  }));
 });

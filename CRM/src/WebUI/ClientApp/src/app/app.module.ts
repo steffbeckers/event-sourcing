@@ -25,14 +25,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { AppEffects } from './store/effects/app.effects';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
-    TodoComponent,
-  ],
+  declarations: [AppComponent, NavMenuComponent, HomeComponent, CounterComponent, FetchDataComponent, TodoComponent],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     FontAwesomeModule,
@@ -43,18 +36,16 @@ import { AppEffects } from './store/effects/app.effects';
     BrowserAnimationsModule,
     ModalModule.forRoot(),
     StoreModule.forRoot(reducers, {
-      metaReducers, 
+      metaReducers,
       runtimeChecks: {
         strictStateImmutability: true,
         strictActionImmutability: true,
-      }
+      },
     }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([AppEffects]),
   ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
-  ],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

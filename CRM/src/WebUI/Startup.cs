@@ -1,9 +1,7 @@
 using CRM.Application;
-using CRM.Application.Common.Interfaces;
 using CRM.Infrastructure;
 using CRM.Infrastructure.Persistence;
 using CRM.WebUI.Filters;
-using CRM.WebUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,14 +30,12 @@ namespace CRM.WebUI
             services.AddApplication();
             services.AddInfrastructure(Configuration);
 
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
-
             services.AddHttpContextAccessor();
 
             services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>();
 
-            services.AddControllersWithViews(options => 
+            services.AddControllersWithViews(options =>
                 options.Filters.Add(new ApiExceptionFilter()));
 
             services.AddRazorPages();
