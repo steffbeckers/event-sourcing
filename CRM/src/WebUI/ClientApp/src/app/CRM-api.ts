@@ -15,7 +15,9 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountsClient {
-    create(dto: CreateAccountDTO): Observable<string>;
+    get(): Observable<AccountDto[]>;
+    create(dto: CreateAccountDto): Observable<string>;
+    getById(id: string): Observable<AccountDto2>;
 }
 
 @Injectable({
@@ -31,7 +33,59 @@ export class AccountsClient implements IAccountsClient {
         this.baseUrl = baseUrl ? baseUrl : "";
     }
 
-    create(dto: CreateAccountDTO): Observable<string> {
+    get(): Observable<AccountDto[]> {
+        let url_ = this.baseUrl + "/api/Accounts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<AccountDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AccountDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<AccountDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AccountDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AccountDto[]>(<any>null);
+    }
+
+    create(dto: CreateAccountDto): Observable<string> {
         let url_ = this.baseUrl + "/api/Accounts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -81,6 +135,57 @@ export class AccountsClient implements IAccountsClient {
             }));
         }
         return _observableOf<string>(<any>null);
+    }
+
+    getById(id: string): Observable<AccountDto2> {
+        let url_ = this.baseUrl + "/api/Accounts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetById(<any>response_);
+                } catch (e) {
+                    return <Observable<AccountDto2>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AccountDto2>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetById(response: HttpResponseBase): Observable<AccountDto2> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AccountDto2.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AccountDto2>(<any>null);
     }
 }
 
@@ -656,13 +761,205 @@ export class WeatherForecastClient implements IWeatherForecastClient {
     }
 }
 
-export class CreateAccountDTO implements ICreateAccountDTO {
+export class AccountDto implements IAccountDto {
+    id?: string;
+    name?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+
+    constructor(data?: IAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.website = _data["website"];
+            this.email = _data["email"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.isActive = _data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): AccountDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["website"] = this.website;
+        data["email"] = this.email;
+        data["phoneNumber"] = this.phoneNumber;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IAccountDto {
+    id?: string;
+    name?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+}
+
+export class AccountDto2 implements IAccountDto2 {
+    id?: string;
+    name?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+    contacts?: ContactDto[] | undefined;
+
+    constructor(data?: IAccountDto2) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.website = _data["website"];
+            this.email = _data["email"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.isActive = _data["isActive"];
+            if (Array.isArray(_data["contacts"])) {
+                this.contacts = [] as any;
+                for (let item of _data["contacts"])
+                    this.contacts!.push(ContactDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): AccountDto2 {
+        data = typeof data === 'object' ? data : {};
+        let result = new AccountDto2();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["website"] = this.website;
+        data["email"] = this.email;
+        data["phoneNumber"] = this.phoneNumber;
+        data["isActive"] = this.isActive;
+        if (Array.isArray(this.contacts)) {
+            data["contacts"] = [];
+            for (let item of this.contacts)
+                data["contacts"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IAccountDto2 {
+    id?: string;
+    name?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+    contacts?: ContactDto[] | undefined;
+}
+
+export class ContactDto implements IContactDto {
+    id?: string;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+    isPrimary?: boolean;
+    sortOrder?: number | undefined;
+
+    constructor(data?: IContactDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.website = _data["website"];
+            this.email = _data["email"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.isActive = _data["isActive"];
+            this.isPrimary = _data["isPrimary"];
+            this.sortOrder = _data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): ContactDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["website"] = this.website;
+        data["email"] = this.email;
+        data["phoneNumber"] = this.phoneNumber;
+        data["isActive"] = this.isActive;
+        data["isPrimary"] = this.isPrimary;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IContactDto {
+    id?: string;
+    firstName?: string | undefined;
+    lastName?: string | undefined;
+    website?: string | undefined;
+    email?: string | undefined;
+    phoneNumber?: string | undefined;
+    isActive?: boolean;
+    isPrimary?: boolean;
+    sortOrder?: number | undefined;
+}
+
+export class CreateAccountDto implements ICreateAccountDto {
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;
     phoneNumber?: string | undefined;
 
-    constructor(data?: ICreateAccountDTO) {
+    constructor(data?: ICreateAccountDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -680,9 +977,9 @@ export class CreateAccountDTO implements ICreateAccountDTO {
         }
     }
 
-    static fromJS(data: any): CreateAccountDTO {
+    static fromJS(data: any): CreateAccountDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateAccountDTO();
+        let result = new CreateAccountDto();
         result.init(data);
         return result;
     }
@@ -697,7 +994,7 @@ export class CreateAccountDTO implements ICreateAccountDTO {
     }
 }
 
-export interface ICreateAccountDTO {
+export interface ICreateAccountDto {
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;
