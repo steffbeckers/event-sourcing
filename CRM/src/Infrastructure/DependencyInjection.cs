@@ -3,6 +3,7 @@ using CRM.Infrastructure.Files;
 using CRM.Infrastructure.Identity;
 using CRM.Infrastructure.Persistence;
 using CRM.Infrastructure.Services;
+using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,14 @@ namespace CRM.Infrastructure
 
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            IEventStoreConnection eventStoreConnection = EventStoreConnection.Create(
+                connectionString: configuration.GetSection("EventStore").GetValue<string>("ConnectionString"),
+                builder: ConnectionSettings.Create().KeepReconnecting(),
+                connectionName: configuration.GetSection("EventStore").GetValue<string>("ConnectionName")
+            );
+            eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
+            services.AddSingleton(eventStoreConnection);
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
