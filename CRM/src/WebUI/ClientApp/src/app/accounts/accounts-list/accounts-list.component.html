@@ -1,1 +1,26 @@
-<p>accounts-list works!</p>
+<ng-container *ngIf="accountsState$ | async as accountsState">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Website</th>
+        <th scope="col">Email address</th>
+        <th scope="col">Phone number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr [routerLink]="account.id" *ngFor="let account of accounts$ | async">
+        <td>{{ account.name }}</td>
+        <td>
+          <a [href]="account.website" target="_blank">{{ account.website }}</a>
+        </td>
+        <td>
+          <a [href]="'mailto:' + account.email">{{ account.email }}</a>
+        </td>
+        <td>
+          <a [href]="'tel:' + account.phoneNumber">{{ account.phoneNumber }}</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>

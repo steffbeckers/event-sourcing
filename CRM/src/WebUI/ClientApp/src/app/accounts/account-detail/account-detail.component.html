@@ -1,2 +1,48 @@
-<h2>account-detail works!</h2>
-<button routerLink="edit">Edit</button>
+<ng-container *ngIf="account$ | async as account">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>{{ account.name }}</h2>
+    <div class="d-flex align-items-center">
+      <div class="form-check mr-4">
+        <input class="form-check-input" type="checkbox" [(ngModel)]="account.isActive" id="accountActive" disabled />
+        <label class="form-check-label" for="accountActive">
+          Active
+        </label>
+      </div>
+      <button routerLink="edit" type="button" class="btn btn-primary">Edit</button>
+    </div>
+  </div>
+  <div class="d-flex">
+    <div class="mr-4">
+      <a [href]="account.website" target="_blank">{{ account.website }}</a>
+    </div>
+    <div class="mr-4">
+      <a [href]="'mailto:' + account.email">{{ account.email }}</a>
+    </div>
+    <div>
+      <a [href]="'tel:' + account.phoneNumber">{{ account.phoneNumber }}</a>
+    </div>
+  </div>
+  <div class="mt-2">
+    <h3>Contacts</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Email address</th>
+          <th scope="col">Phone number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contact of account.contacts">
+          <td>{{ contact.firstName }} {{ contact.lastName }}</td>
+          <td>
+            <a [href]="'mailto:' + contact.email">{{ contact.email }}</a>
+          </td>
+          <td>
+            <a [href]="'tel:' + contact.phoneNumber">{{ contact.phoneNumber }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
