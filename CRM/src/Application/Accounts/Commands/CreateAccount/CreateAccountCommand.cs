@@ -7,38 +7,54 @@ using System.Threading.Tasks;
 
 namespace CRM.Application.Accounts.Commands.CreateAccount
 {
-    public partial class CreateAccountCommand : IRequest<Guid>
+    public partial class CreateAccountCommand : INotification
     {
-        public string Name { get; set; }
-        public string Website { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-    }
-
-    public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Guid>
-    {
-        private readonly IApplicationDbContext _context;
-
-        public CreateAccountCommandHandler(IApplicationDbContext context)
+        public CreateAccountCommand(
+            Guid id,
+            string name,
+            string website,
+            string email,
+            string phoneNumber,
+            bool isActive
+        )
         {
-            _context = context;
+            Id = id;
+            Name = name;
+            Website = website;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            IsActive = isActive;
         }
 
-        public async Task<Guid> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+        public Guid Id { get; private set; }
+        public string Name { get; private set; }
+        public string Website { get; private set; }
+        public string Email { get; private set; }
+        public string PhoneNumber { get; private set; }
+        public bool IsActive { get; private set; }
+    }
+
+    public class CreateAccountCommandHandler : INotificationHandler<CreateAccountCommand>
+    {
+        private readonly IEventsService<Account, Guid> _eventsService;
+
+        public CreateAccountCommandHandler(IEventsService<Account, Guid> eventsService)
         {
-            Account account = new Account()
-            {
-                Name = request.Name,
-                Website = request.Website,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber
-            };
+            _eventsService = eventsService;
+        }
 
-            _context.Accounts.Add(account);
+        public async Task Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+        {
+            Account account = new Account(
+                request.Id,
+                request.Name,
+                request.Website,
+                request.Email,
+                request.PhoneNumber,
+                request.IsActive
+            );
 
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return account.Id;
+            await _eventsService.PersistAsync(account);
         }
     }
 }

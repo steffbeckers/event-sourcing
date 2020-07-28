@@ -1,9 +1,6 @@
 ﻿using CRM.Application.Common.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +21,7 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
 
             RuleFor(v => v.Website)
                 .MaximumLength(500).WithMessage("Website must not exceed 500 characters.");
-            
+
             RuleFor(v => v.Email)
                 .EmailAddress().WithMessage("Email must be valid.")
                 .MaximumLength(50).WithMessage("Email must not exceed 50 characters.");

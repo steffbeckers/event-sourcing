@@ -1,8 +1,6 @@
 ﻿using CRM.Application.Common.Mappings;
 using CRM.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CRM.Application.Accounts.Queries.GetAccounts
 {

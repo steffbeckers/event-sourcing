@@ -27,7 +27,7 @@ namespace CRM.Application.Accounts.Queries.GetAccountById
         {
             profile.CreateMap<Account, AccountDto>()
                 .ForMember(
-                    d => d.Contacts, 
+                    d => d.Contacts,
                     opt => opt.MapFrom(s =>
                         s.AccountContact.Select(ac =>
                             new ContactDto()

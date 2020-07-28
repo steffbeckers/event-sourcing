@@ -1,7 +1,9 @@
 ﻿using CRM.Application.Common.Interfaces;
+using CRM.Domain.Entities;
 using CRM.Infrastructure.Files;
 using CRM.Infrastructure.Identity;
 using CRM.Infrastructure.Persistence;
+using CRM.Infrastructure.Persistence.EventStore;
 using CRM.Infrastructure.Services;
 using EventStore.ClientAPI;
 using Microsoft.AspNetCore.Authentication;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CRM.Infrastructure
 {
@@ -34,6 +37,14 @@ namespace CRM.Infrastructure
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            services.AddIdentityServer()
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+
+            services.AddAuthentication()
+                .AddIdentityServerJwt();
+
             IEventStoreConnection eventStoreConnection = EventStoreConnection.Create(
                 connectionString: configuration.GetSection("EventStore").GetValue<string>("ConnectionString"),
                 builder: ConnectionSettings.Create().KeepReconnecting(),
@@ -41,21 +52,16 @@ namespace CRM.Infrastructure
             );
             eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
             services.AddSingleton(eventStoreConnection);
-
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddSingleton<IEventsRepository<Account, Guid>, EventsRepository<Account, Guid>>();
+            services.AddSingleton<IEventsService<Account, Guid>, EventsService<Account, Guid>>();
+            services.AddSingleton<IEventDeserializer, EventDeserializer>();
 
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<EmailSenderAuthOptions>(configuration);
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
-
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
 
             return services;
         }

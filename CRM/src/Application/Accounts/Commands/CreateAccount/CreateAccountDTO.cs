@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using CRM.Application.Common.Mappings;
-
-namespace CRM.Application.Accounts.Commands.CreateAccount
+﻿namespace CRM.Application.Accounts.Commands.CreateAccount
 {
     public class CreateAccountDto
     {

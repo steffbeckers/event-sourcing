@@ -1,11 +1,13 @@
 ﻿using CRM.Application.Accounts.Commands.CreateAccount;
-using GetAccounts = CRM.Application.Accounts.Queries.GetAccounts;
-using GetAccountById = CRM.Application.Accounts.Queries.GetAccountById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using GetAccountById = CRM.Application.Accounts.Queries.GetAccountById;
+using GetAccounts = CRM.Application.Accounts.Queries.GetAccounts;
 
 namespace CRM.WebUI.Controllers
 {
@@ -25,16 +27,25 @@ namespace CRM.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create(CreateAccountDto dto)
+        public async Task<ActionResult<Guid>> Create([FromBody] CreateAccountDto dto, CancellationToken cancellationToken = default)
         {
-            CreateAccountCommand command = new CreateAccountCommand() {
-                Name = dto.Name,
-                Website = dto.Website,
-                Email = dto.Email,
-                PhoneNumber = dto.PhoneNumber
-            };
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return await Mediator.Send(command);
+            CreateAccountCommand command = new CreateAccountCommand(
+                Guid.NewGuid(),
+                dto.Name,
+                dto.Website,
+                dto.Email,
+                dto.PhoneNumber,
+                isActive: true
+            );
+
+            await Mediator.Publish(command, cancellationToken);
+
+            return CreatedAtAction("GetById", new { id = command.Id }, command);
         }
     }
 }
