@@ -6,6 +6,7 @@ using CRM.Infrastructure.Persistence;
 using CRM.Infrastructure.Persistence.EventStore;
 using CRM.Infrastructure.Services;
 using EventStore.ClientAPI;
+using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -40,14 +41,26 @@ namespace CRM.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options => {
+                    options.Clients.Add(new Client()
+                    {
+                        ClientId = "generic",
+                        ClientName = "Generic",
+                        RequireClientSecret = false,
+                        AllowedGrantTypes = GrantTypes.ResourceOwnerPasswordAndClientCredentials
+                    });
+                });
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
             IEventStoreConnection eventStoreConnection = EventStoreConnection.Create(
                 connectionString: configuration.GetSection("EventStore").GetValue<string>("ConnectionString"),
-                builder: ConnectionSettings.Create().KeepReconnecting(),
+                builder: ConnectionSettings.Create()
+                    .KeepReconnecting()
+                    .EnableVerboseLogging()
+                    .UseConsoleLogger()
+                    .DisableTls(), // TODO: https://github.com/EventStore/EventStore/issues/2547
                 connectionName: configuration.GetSection("EventStore").GetValue<string>("ConnectionName")
             );
             eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
