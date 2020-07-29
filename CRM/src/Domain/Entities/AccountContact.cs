@@ -3,7 +3,7 @@ using System;
 
 namespace CRM.Domain.Entities
 {
-    public class AccountContact
+    public class AccountContact : AuditableEntity
     {
         public Guid AccountId { get; set; }
         public Account Account { get; set; }
@@ -13,10 +13,5 @@ namespace CRM.Domain.Entities
 
         public bool IsPrimary { get; set; }
         public int? SortOrder { get; set; }
-
-        public string CreatedBy { get; set; }
-        public DateTime Created { get; set; }
-        public string LastModifiedBy { get; set; }
-        public DateTime? LastModified { get; set; }
     }
 }

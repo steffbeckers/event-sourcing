@@ -1,5 +1,5 @@
 ﻿using CRM.Application.Common.Interfaces;
-using CRM.Domain.Entities;
+using CRM.Domain.Aggregates;
 using CRM.Infrastructure.Files;
 using CRM.Infrastructure.Identity;
 using CRM.Infrastructure.Persistence;

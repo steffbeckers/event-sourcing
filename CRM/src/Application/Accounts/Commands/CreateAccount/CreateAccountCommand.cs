@@ -1,5 +1,5 @@
 ﻿using CRM.Application.Common.Interfaces;
-using CRM.Domain.Entities;
+using CRM.Domain.Aggregates;
 using MediatR;
 using System;
 using System.Threading;
@@ -36,10 +36,12 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
 
     public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand>
     {
+        private readonly ICurrentUserService _currentUserService;
         private readonly IEventsService<Account, Guid> _eventsService;
 
-        public CreateAccountCommandHandler(IEventsService<Account, Guid> eventsService)
+        public CreateAccountCommandHandler(ICurrentUserService currentUserService, IEventsService<Account, Guid> eventsService)
         {
+            _currentUserService = currentUserService;
             _eventsService = eventsService;
         }
 
@@ -51,7 +53,8 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
                 request.Website,
                 request.Email,
                 request.PhoneNumber,
-                request.IsActive
+                request.IsActive,
+                this._currentUserService.UserId
             );
 
             await _eventsService.PersistAsync(account);

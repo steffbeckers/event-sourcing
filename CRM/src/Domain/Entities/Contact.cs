@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CRM.Domain.Entities
 {
-    public class Contact
+    public class Contact : AuditableEntity
     {
         public Contact()
         {
@@ -20,10 +20,5 @@ namespace CRM.Domain.Entities
         public bool IsActive { get; set; }
 
         public ICollection<AccountContact> AccountContact { get; set; }
-
-        public string CreatedBy { get; set; }
-        public DateTime Created { get; set; }
-        public string LastModifiedBy { get; set; }
-        public DateTime? LastModified { get; set; }
     }
 }
