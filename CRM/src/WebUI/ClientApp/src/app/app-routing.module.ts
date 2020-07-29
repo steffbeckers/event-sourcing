@@ -10,6 +10,7 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+    canActivate: [AuthorizeGuard],
   },
   { path: 'counter', component: CounterComponent },
   { path: 'fetch-data', component: FetchDataComponent },
