@@ -116,9 +116,12 @@ namespace CRM.WebUI
 
                 spa.Options.SourcePath = "ClientApp";
 
+                
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    // I'll run it myself
+                    //spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }
