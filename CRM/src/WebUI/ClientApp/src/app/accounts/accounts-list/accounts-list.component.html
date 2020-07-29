@@ -1,4 +1,8 @@
 <ng-container *ngIf="accountsState$ | async as accountsState">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 routerLink="/accounts">Accounts</h1>
+    <button routerLink="create" type="button" class="btn btn-primary">Create new account</button>
+  </div>
   <table class="table table-striped">
     <thead>
       <tr>

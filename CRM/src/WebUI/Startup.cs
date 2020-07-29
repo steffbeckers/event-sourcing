@@ -78,12 +78,12 @@ namespace CRM.WebUI
             else
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHttpsRedirection();
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHealthChecks("/health");
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
@@ -113,14 +113,12 @@ namespace CRM.WebUI
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
                 // see https://go.microsoft.com/fwlink/?linkid=864501
-
                 spa.Options.SourcePath = "ClientApp";
-
                 
                 if (env.IsDevelopment())
                 {
-                    // I'll run it myself
                     //spa.UseAngularCliServer(npmScript: "start");
+                    // To run externally
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });

@@ -29,11 +29,6 @@ namespace CRM.WebUI.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> Create([FromBody] CreateAccountDto dto, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             CreateAccountCommand command = new CreateAccountCommand(
                 Guid.NewGuid(),
                 dto.Name,
@@ -43,9 +38,9 @@ namespace CRM.WebUI.Controllers
                 isActive: true
             );
 
-            await Mediator.Publish(command, cancellationToken);
+            await Mediator.Send(command, cancellationToken);
 
-            return CreatedAtAction("GetById", new { id = command.Id }, command);
+            return CreatedAtAction("GetById", new { id = command.Id }, command.Id);
         }
     }
 }

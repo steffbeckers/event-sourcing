@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CRM.Application.Accounts.Commands.CreateAccount
 {
-    public partial class CreateAccountCommand : INotification
+    public partial class CreateAccountCommand : IRequest<Unit>
     {
         public CreateAccountCommand(
             Guid id,
@@ -34,7 +34,7 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
         public bool IsActive { get; private set; }
     }
 
-    public class CreateAccountCommandHandler : INotificationHandler<CreateAccountCommand>
+    public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand>
     {
         private readonly IEventsService<Account, Guid> _eventsService;
 
@@ -43,7 +43,7 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
             _eventsService = eventsService;
         }
 
-        public async Task Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
         {
             Account account = new Account(
                 request.Id,
@@ -55,6 +55,8 @@ namespace CRM.Application.Accounts.Commands.CreateAccount
             );
 
             await _eventsService.PersistAsync(account);
+
+            return Unit.Value;
         }
     }
 }
