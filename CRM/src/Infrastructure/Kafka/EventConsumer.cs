@@ -4,7 +4,6 @@ using CRM.Domain.Common;
 using CRM.Domain.Events;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -39,7 +38,7 @@ namespace CRM.Infrastructure.Kafka
             };
 
             _consumer = new ConsumerBuilder<TKey, string>(consumerConfig)
-                .SetKeyDeserializer(new KeyDeserializerFactory().Create<TKey>())  
+                .SetKeyDeserializer(new KeyDeserializerFactory().Create<TKey>())
                 .Build();
 
             _consumer.Subscribe(topicName);

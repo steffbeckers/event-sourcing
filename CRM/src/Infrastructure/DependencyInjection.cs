@@ -1,9 +1,10 @@
 ﻿using CRM.Application.Common.Interfaces;
 using CRM.Domain.Aggregates;
+using CRM.Infrastructure.EventStore;
 using CRM.Infrastructure.Files;
 using CRM.Infrastructure.Identity;
+using CRM.Infrastructure.Kafka;
 using CRM.Infrastructure.Persistence;
-using CRM.Infrastructure.EventStore;
 using CRM.Infrastructure.Services;
 using EventStore.ClientAPI;
 using IdentityServer4.Models;
@@ -13,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using CRM.Infrastructure.Kafka;
 
 namespace CRM.Infrastructure
 {
@@ -42,7 +42,8 @@ namespace CRM.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options => {
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+                {
                     options.Clients.Add(new Client()
                     {
                         ClientId = "generic",

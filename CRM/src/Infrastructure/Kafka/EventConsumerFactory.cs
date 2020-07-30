@@ -3,9 +3,6 @@ using CRM.Domain.Common;
 using CRM.Domain.Events;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

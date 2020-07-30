@@ -3,7 +3,6 @@ using CRM.Application.Common.Models;
 using CRM.Domain.Entities;
 using CRM.Domain.Events.Accounts;
 using MediatR;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 

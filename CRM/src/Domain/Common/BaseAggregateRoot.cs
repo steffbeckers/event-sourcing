@@ -14,7 +14,7 @@ namespace CRM.Domain.Common
         private readonly Queue<IDomainEvent<TKey>> _events = new Queue<IDomainEvent<TKey>>();
 
         protected BaseAggregateRoot() { }
-        
+
         protected BaseAggregateRoot(TKey id) : base(id)
         {
         }
@@ -32,7 +32,7 @@ namespace CRM.Domain.Common
         protected void AddEvent(IDomainEvent<TKey> @event)
         {
             _events.Enqueue(@event);
-           
+
             this.Apply(@event);
 
             this.Version++;
@@ -57,14 +57,14 @@ namespace CRM.Domain.Common
 
         public static TA Create(IEnumerable<IDomainEvent<TKey>> events)
         {
-            if(null == events || !events.Any())
+            if (null == events || !events.Any())
                 throw new ArgumentNullException(nameof(events));
 
             var cTor = LazyCtor.Value;
             var result = (TA)cTor.Invoke(new object[0]);
 
-            var baseAggregate =  result as BaseAggregateRoot<TA, TKey>;
-            if (baseAggregate != null) 
+            var baseAggregate = result as BaseAggregateRoot<TA, TKey>;
+            if (baseAggregate != null)
                 foreach (var @event in events)
                     baseAggregate.AddEvent(@event);
 

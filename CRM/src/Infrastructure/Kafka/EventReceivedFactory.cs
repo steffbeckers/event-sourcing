@@ -1,7 +1,4 @@
 ﻿using CRM.Application.Common.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CRM.Infrastructure.Kafka
 {

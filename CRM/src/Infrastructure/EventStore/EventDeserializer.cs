@@ -13,7 +13,7 @@ namespace CRM.Infrastructure.EventStore
 
         public EventDeserializer(IEnumerable<Assembly> assemblies)
         {
-            _assemblies = assemblies ?? new[] {Assembly.GetExecutingAssembly()};
+            _assemblies = assemblies ?? new[] { Assembly.GetExecutingAssembly() };
         }
 
         public IDomainEvent<TKey> Deserialize<TKey>(string type, byte[] data)
@@ -33,7 +33,7 @@ namespace CRM.Infrastructure.EventStore
             // As of 01/10/2020, "Deserialization to reference types without a parameterless constructor isn't supported."
             // https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to
             // apparently it's being worked on: https://github.com/dotnet/runtime/issues/29895
-            
+
             var result = Newtonsoft.Json.JsonConvert.DeserializeObject(data, eventType,
                 new Newtonsoft.Json.JsonSerializerSettings()
                 {
@@ -41,7 +41,7 @@ namespace CRM.Infrastructure.EventStore
                     ContractResolver = new PrivateSetterContractResolver()
                 });
 
-            return (IDomainEvent<TKey>) result;
+            return (IDomainEvent<TKey>)result;
         }
     }
 }

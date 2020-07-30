@@ -1,5 +1,4 @@
 ﻿using CRM.Application.Accounts.Commands.CreateAccount;
-using CRM.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

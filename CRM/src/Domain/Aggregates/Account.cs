@@ -8,7 +8,7 @@ namespace CRM.Domain.Aggregates
     public class Account : BaseAggregateRoot<Account, Guid>
     {
         public Account()
-        {}
+        { }
 
         public Account(
             Guid id,

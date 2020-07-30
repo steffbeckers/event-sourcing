@@ -6,15 +6,17 @@ services:
     container_name: crm_eventstore
     restart: always
     command: --dev --enable-external-tcp --ext-ip=0.0.0.0 --int-ip=0.0.0.0 --disable-external-tcp-tls
+    ports:
+      - 1113:1113
+      - 2113:2113
+    volumes:
+      - evenstore_data:/var/lib/eventstore
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_INT_TCP_PORT=1112
       - EVENTSTORE_EXT_TCP_PORT=1113
       - EVENTSTORE_INT_HTTP_PORT=2112
       - EVENTSTORE_EXT_HTTP_PORT=2113
-    ports:
-      - 1113:1113
-      - 2113:2113
 
   zookeeper:
     image: bitnami/zookeeper:3
@@ -23,7 +25,7 @@ services:
     ports:
       - 2181:2181
     volumes:
-      - "zookeeper_data:/bitnami"
+      - zookeeper_data:/bitnami
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
 
@@ -35,7 +37,7 @@ services:
       - 9092:9092
       - 9093:9093
     volumes:
-      - "kafka_data:/bitnami"
+      - kafka_data:/bitnami
     environment:
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092,EXTERNAL://localhost:9093
@@ -50,6 +52,7 @@ services:
   # kafka_ui:
   #   image: landoop/kafka-topics-ui
   #   container_name: crm_kafka_ui
+  #   restart: always
   #   ports:
   #     - 8000:8000
   #   environment:
@@ -59,6 +62,8 @@ services:
   #     - kafka
 
 volumes:
+  evenstore_data:
+    driver: local
   zookeeper_data:
     driver: local
   kafka_data:

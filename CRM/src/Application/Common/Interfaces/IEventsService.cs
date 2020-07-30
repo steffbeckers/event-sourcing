@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace CRM.Application.Common.Interfaces
 {
-    public interface IEventsService<TA, TKey> 
+    public interface IEventsService<TA, TKey>
         where TA : class, IAggregateRoot<TKey>
     {
         Task PersistAsync(TA aggregateRoot);
