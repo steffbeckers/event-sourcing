@@ -80,5 +80,14 @@ namespace CRM.Infrastructure
 
             return services;
         }
+
+        public static IServiceCollection AddEventConsumerWorker(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton(typeof(EventConsumer<,>));
+            services.AddSingleton<IEventConsumerFactory, EventConsumerFactory>();
+            services.AddHostedService<EventsConsumerWorker>();
+
+            return services;
+        }
     }
 }

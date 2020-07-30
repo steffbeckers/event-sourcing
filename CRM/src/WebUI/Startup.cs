@@ -29,6 +29,7 @@ namespace CRM.WebUI
         {
             services.AddApplication();
             services.AddInfrastructure(Configuration);
+            services.AddEventConsumerWorker(Configuration);
 
             services.AddHttpContextAccessor();
 
