@@ -1,6 +1,7 @@
 ﻿using CRM.Domain.Common;
 using CRM.Domain.Events;
 using CRM.Domain.Events.Accounts;
+using CRM.Domain.Exceptions;
 using System;
 
 namespace CRM.Domain.Aggregates
@@ -41,6 +42,16 @@ namespace CRM.Domain.Aggregates
         public bool IsActive { get; private set; }
         public string UserId { get; private set; }
 
+        public void Deactivate(string userId)
+        {
+            if (!this.IsActive)
+            {
+                throw new AccountDeactivationException(this, $"Account \"{this.Name}\" is already deactivated.");
+            }
+
+            this.AddEvent(new AccountDeactivated(this, userId));
+        }
+
         protected override void Apply(IDomainEvent<Guid> @event)
         {
             switch (@event)
@@ -53,6 +64,9 @@ namespace CRM.Domain.Aggregates
                     PhoneNumber = account.PhoneNumber;
                     IsActive = account.IsActive;
                     UserId = account.UserId;
+                    break;
+                case AccountDeactivated account:
+                    IsActive = false;
                     break;
             }
         }

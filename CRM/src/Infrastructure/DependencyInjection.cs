@@ -72,8 +72,10 @@ namespace CRM.Infrastructure
             services.AddSingleton<IEventsService<Account, Guid>, EventsService<Account, Guid>>();
             services.AddSingleton<IEventDeserializer, EventDeserializer>();
 
-            services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<EmailSenderAuthOptions>(configuration);
+            services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddTransient<ISendGridService, SendGridService>();
 
             services.AddTransient<IDateTime, DateTimeService>();
             services.AddTransient<IIdentityService, IdentityService>();

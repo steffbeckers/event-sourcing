@@ -6,8 +6,4 @@
     <AssemblyName>CRM.Domain</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Events\Accounts\" />
-  </ItemGroup>
-
 </Project>

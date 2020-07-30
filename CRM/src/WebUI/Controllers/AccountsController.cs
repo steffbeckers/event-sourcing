@@ -1,4 +1,5 @@
 ﻿using CRM.Application.Accounts.Commands.CreateAccount;
+using CRM.Application.Accounts.Commands.DeactivateAccount;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -40,6 +41,16 @@ namespace CRM.WebUI.Controllers
             await Mediator.Send(command, cancellationToken);
 
             return CreatedAtAction("GetById", new { id = command.Id }, command.Id);
+        }
+
+        [HttpPut("{id}/deactivate")]
+        public async Task<ActionResult> Deactivate(Guid id, CancellationToken cancellationToken = default)
+        {
+            DeactivateAccountCommand command = new DeactivateAccountCommand(id);
+
+            await Mediator.Send(command, cancellationToken);
+
+            return Ok();
         }
     }
 }

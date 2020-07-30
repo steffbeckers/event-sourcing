@@ -15,14 +15,13 @@ namespace CRM.Infrastructure.Identity
             options = optionsAccessor.Value;
         }
 
-        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             SendGridClient client = new SendGridClient(options.SendGridKey);
 
             SendGridMessage msg = new SendGridMessage()
             {
-                // TODO: Config
-                From = new EmailAddress("steff@steffbeckers.eu", options.SendGridUser),
+                From = new EmailAddress(options.SendGridEmail, options.SendGridUser),
                 Subject = subject,
                 HtmlContent = htmlMessage
             };
@@ -32,13 +31,14 @@ namespace CRM.Infrastructure.Identity
             // See https://sendgrid.com/docs/User_Guide/Settings/tracking.html
             msg.SetClickTracking(false, false);
 
-            return client.SendEmailAsync(msg);
+            await client.SendEmailAsync(msg);
         }
     }
 
     public class EmailSenderAuthOptions
     {
-        public string SendGridUser { get; set; }
         public string SendGridKey { get; set; }
+        public string SendGridEmail { get; set; }
+        public string SendGridUser { get; set; }
     }
 }

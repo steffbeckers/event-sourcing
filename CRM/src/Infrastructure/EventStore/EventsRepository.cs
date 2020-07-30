@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CRM.Infrastructure.EventStore
@@ -62,15 +63,14 @@ namespace CRM.Infrastructure.EventStore
 
         private string GetStreamName(TKey aggregateKey)
         {
-            var streamName = $"{_streamBaseName}_{aggregateKey}";
-            return streamName;
+            return $"{_streamBaseName}_{aggregateKey}";
         }
 
         public async Task<TA> RehydrateAsync(TKey key)
         {
-            var streamName = GetStreamName(key);
+            string streamName = GetStreamName(key);
 
-            var events = new List<IDomainEvent<TKey>>();
+            List<IDomainEvent<TKey>> events = new List<IDomainEvent<TKey>>();
 
             StreamEventsSlice currentSlice;
             long nextSliceStart = StreamPosition.Start;
@@ -83,32 +83,30 @@ namespace CRM.Infrastructure.EventStore
                 events.AddRange(currentSlice.Events.Select(Map));
             } while (!currentSlice.IsEndOfStream);
 
-            var result = BaseAggregateRoot<TA, TKey>.Create(events.OrderBy(e => e.AggregateVersion));
-
-            return result;
+            return BaseAggregateRoot<TA, TKey>.Create(events.OrderBy(e => e.AggregateVersion));
         }
 
         private IDomainEvent<TKey> Map(ResolvedEvent resolvedEvent)
         {
-            var meta = System.Text.Json.JsonSerializer.Deserialize<EventMeta>(resolvedEvent.Event.Metadata);
+            EventMeta meta = JsonSerializer.Deserialize<EventMeta>(resolvedEvent.Event.Metadata);
+
             return _eventDeserializer.Deserialize<TKey>(meta.EventType, resolvedEvent.Event.Data);
         }
 
         private static EventData Map(IDomainEvent<TKey> @event)
         {
-            var json = System.Text.Json.JsonSerializer.Serialize((dynamic)@event);
-            var data = Encoding.UTF8.GetBytes(json);
+            string json = JsonSerializer.Serialize((dynamic)@event);
+            byte[] data = Encoding.UTF8.GetBytes(json);
 
-            var eventType = @event.GetType();
-            var meta = new EventMeta()
+            Type eventType = @event.GetType();
+            EventMeta meta = new EventMeta()
             {
                 EventType = eventType.AssemblyQualifiedName
             };
-            var metaJson = System.Text.Json.JsonSerializer.Serialize(meta);
-            var metadata = Encoding.UTF8.GetBytes(metaJson);
+            string metaJson = JsonSerializer.Serialize(meta);
+            byte[] metadata = Encoding.UTF8.GetBytes(metaJson);
 
-            var eventPayload = new EventData(Guid.NewGuid(), eventType.Name, true, data, metadata);
-            return eventPayload;
+            return new EventData(Guid.NewGuid(), eventType.Name, true, data, metadata);
         }
 
         internal struct EventMeta
