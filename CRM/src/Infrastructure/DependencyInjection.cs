@@ -60,8 +60,8 @@ namespace CRM.Infrastructure
                 connectionString: configuration.GetSection("EventStore").GetValue<string>("ConnectionString"),
                 builder: ConnectionSettings.Create()
                     .KeepReconnecting()
-                    .EnableVerboseLogging()
-                    .UseConsoleLogger()
+                    //.EnableVerboseLogging()
+                    //.UseConsoleLogger()
                     .DisableTls(), // TODO: https://github.com/EventStore/EventStore/issues/2547
                 connectionName: configuration.GetSection("EventStore").GetValue<string>("ConnectionName")
             );
