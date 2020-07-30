@@ -3,7 +3,7 @@ using CRM.Domain.Aggregates;
 using CRM.Infrastructure.Files;
 using CRM.Infrastructure.Identity;
 using CRM.Infrastructure.Persistence;
-using CRM.Infrastructure.Persistence.EventStore;
+using CRM.Infrastructure.EventStore;
 using CRM.Infrastructure.Services;
 using EventStore.ClientAPI;
 using IdentityServer4.Models;
@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using CRM.Infrastructure.Kafka;
 
 namespace CRM.Infrastructure
 {
@@ -66,6 +67,7 @@ namespace CRM.Infrastructure
             eventStoreConnection.ConnectAsync().GetAwaiter().GetResult();
             services.AddSingleton(eventStoreConnection);
             services.AddSingleton<IEventsRepository<Account, Guid>, EventsRepository<Account, Guid>>();
+            services.AddSingleton<IEventProducer<Account, Guid>, EventProducer<Account, Guid>>();
             services.AddSingleton<IEventsService<Account, Guid>, EventsService<Account, Guid>>();
             services.AddSingleton<IEventDeserializer, EventDeserializer>();
 

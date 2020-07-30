@@ -4,23 +4,20 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CRM.Infrastructure.Persistence.EventStore
+namespace CRM.Infrastructure.EventStore
 {
     public class EventsService<TA, TKey> : IEventsService<TA, TKey> where TA : class, IAggregateRoot<TKey>
     {
         private readonly IEventsRepository<TA, TKey> _eventsRepository;
-        // TODO
-        //private readonly IEventProducer<TA, TKey> _eventProducer;
+        private readonly IEventProducer<TA, TKey> _eventProducer;
 
         public EventsService(
-            IEventsRepository<TA, TKey> eventsRepository
-            // TODO
-            //IEventProducer<TA, TKey> eventProducer
+            IEventsRepository<TA, TKey> eventsRepository,
+            IEventProducer<TA, TKey> eventProducer
          )
         {
             _eventsRepository = eventsRepository ?? throw new ArgumentNullException(nameof(eventsRepository));
-            // TODO
-            //_eventProducer = eventProducer ?? throw new ArgumentNullException(nameof(eventProducer));
+            _eventProducer = eventProducer ?? throw new ArgumentNullException(nameof(eventProducer));
         }
 
         public async Task PersistAsync(TA aggregateRoot)
@@ -31,9 +28,11 @@ namespace CRM.Infrastructure.Persistence.EventStore
             if (!aggregateRoot.Events.Any())
                 return;
 
+            // Append the aggregate to the eventstore db
             await _eventsRepository.AppendAsync(aggregateRoot);
-            // TODO
-            //await _eventProducer.DispatchAsync(aggregateRoot);
+
+            // Dispatch the aggregate events to the event bus (Kafka)
+            await _eventProducer.DispatchAsync(aggregateRoot);
         }
 
         public Task<TA> RehydrateAsync(TKey key)

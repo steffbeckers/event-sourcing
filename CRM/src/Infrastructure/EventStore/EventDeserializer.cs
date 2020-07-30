@@ -1,12 +1,11 @@
 ﻿using CRM.Application.Common.Interfaces;
 using CRM.Domain.Events;
-using CRM.Infrastructure.Persistence.EventStore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CRM.Infrastructure.Persistence.EventStore
+namespace CRM.Infrastructure.EventStore
 {
     public class EventDeserializer : IEventDeserializer
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CRM.Infrastructure.Persistence.EventStore
+namespace CRM.Infrastructure.EventStore
 {
     /// <summary>
     /// https://www.mking.net/blog/working-with-private-setters-in-json-net

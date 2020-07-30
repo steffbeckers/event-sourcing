@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CRM.Infrastructure.Persistence.EventStore
+namespace CRM.Infrastructure.EventStore
 {
     public class EventsRepository<TA, TKey> : IEventsRepository<TA, TKey>
         where TA : class, IAggregateRoot<TKey>
