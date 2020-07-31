@@ -43,13 +43,11 @@ namespace CRM.Infrastructure.Persistence
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        // Event sourcing, UserId is provided through command
-                        //entry.Entity.CreatedBy = _currentUserService.UserId;
+                        entry.Entity.CreatedBy = _currentUserService.UserId;
                         entry.Entity.Created = _dateTime.Now;
                         break;
                     case EntityState.Modified:
-                        // Event sourcing, UserId is provided through command
-                        //entry.Entity.LastModifiedBy = _currentUserService.UserId;
+                        entry.Entity.LastModifiedBy = _currentUserService.UserId;
                         entry.Entity.LastModified = _dateTime.Now;
                         break;
                 }
