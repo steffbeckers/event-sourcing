@@ -54,7 +54,11 @@ namespace CRM.Infrastructure
                 });
 
             services.AddAuthentication()
-                .AddIdentityServerJwt();
+                .AddIdentityServerJwt()
+                .AddMicrosoftAccount(options => {
+                    options.ClientId = "f1283ff6-7d2f-443e-9045-8e3874a13970";
+                    options.ClientSecret = "lY0agf-.xcT7Zfc.gJZDSe8rZg9E2~Ga63";
+                });
 
             IEventStoreConnection eventStoreConnection = EventStoreConnection.Create(
                 connectionString: configuration.GetSection("EventStore").GetValue<string>("ConnectionString"),
