@@ -4,6 +4,7 @@ import { CreateAccountDto, ICreateAccountDto } from 'src/app/crm-api';
 import { Store } from '@ngrx/store';
 import { createAccount } from '../store/actions/accounts.actions';
 import { selectCreateAccountError } from '../store/selectors/accounts.selectors';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-account-create',
@@ -12,6 +13,7 @@ import { selectCreateAccountError } from '../store/selectors/accounts.selectors'
 })
 export class AccountCreateComponent implements OnInit {
   public accountForm: FormGroup = this.fb.group({
+    id: [null, Validators.required],
     name: [null, Validators.required],
     website: null,
     email: null,
@@ -24,6 +26,9 @@ export class AccountCreateComponent implements OnInit {
   constructor(private store: Store, private fb: FormBuilder) {}
 
   ngOnInit(): void {
+    this.accountForm.patchValue({
+      id: uuidv4(),
+    });
     this.createAccountError$.subscribe((error) => {
       this.errors = error?.errors;
     });

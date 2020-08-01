@@ -1,4 +1,5 @@
-﻿using CRM.Application.Accounts.Commands.CreateAccount;
+﻿using CRM.Application.Accounts.Commands.ActivateAccount;
+using CRM.Application.Accounts.Commands.CreateAccount;
 using CRM.Application.Accounts.Commands.DeactivateAccount;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,10 +28,10 @@ namespace CRM.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> Create([FromBody] CreateAccountDto dto, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Create([FromBody] CreateAccountDto dto, CancellationToken cancellationToken = default)
         {
             CreateAccountCommand command = new CreateAccountCommand(
-                dto.Id ?? Guid.NewGuid(),
+                dto.Id,
                 dto.Name,
                 dto.Website,
                 dto.Email,
@@ -40,11 +41,21 @@ namespace CRM.WebUI.Controllers
 
             await Mediator.Send(command, cancellationToken);
 
-            return CreatedAtAction("GetById", new { id = command.Id }, command.Id);
+            return Ok();
+        }
+
+        [HttpPut("{id}/activate")]
+        public async Task<IActionResult> Activate(Guid id, CancellationToken cancellationToken = default)
+        {
+            ActivateAccountCommand command = new ActivateAccountCommand(id);
+
+            await Mediator.Send(command, cancellationToken);
+
+            return Ok();
         }
 
         [HttpPut("{id}/deactivate")]
-        public async Task<ActionResult> Deactivate(Guid id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Deactivate(Guid id, CancellationToken cancellationToken = default)
         {
             DeactivateAccountCommand command = new DeactivateAccountCommand(id);
 

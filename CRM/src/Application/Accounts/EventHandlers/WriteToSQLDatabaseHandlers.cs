@@ -10,6 +10,7 @@ namespace CRM.Application.Accounts.EventHandlers
 {
     public class WriteToSQLDatabaseHandlers : 
         INotificationHandler<EventReceived<AccountCreated>>,
+        INotificationHandler<EventReceived<AccountActivated>>,
         INotificationHandler<EventReceived<AccountDeactivated>>
     {
         private readonly IApplicationDbContext _context;
@@ -38,6 +39,19 @@ namespace CRM.Application.Accounts.EventHandlers
             };
 
             await _context.Accounts.AddAsync(newAccount);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task Handle(EventReceived<AccountActivated> notification, CancellationToken cancellationToken)
+        {
+            Account account = await this._context.Accounts.FindAsync(notification.Event.AggregateId);
+            if (account == null) { return; }
+
+            account.IsActive = true;
+            account.LastModifiedBy = notification.Event.UserId;
+
+            _context.Accounts.Update(account);
 
             await _context.SaveChangesAsync(cancellationToken);
         }

@@ -4,7 +4,7 @@ import { selectAccountsState, selectEntityById } from '../store/selectors/accoun
 import { ActivatedRoute } from '@angular/router';
 import { AccountDto2 } from 'src/app/crm-api';
 import { Observable } from 'rxjs';
-import { loadAccount } from '../store/actions/accounts.actions';
+import { loadAccount, deactivateAccount, activateAccount } from '../store/actions/accounts.actions';
 
 @Component({
   selector: 'app-account-detail',
@@ -14,6 +14,7 @@ import { loadAccount } from '../store/actions/accounts.actions';
 export class AccountDetailComponent implements OnInit {
   accountsState$ = this.store.select(selectAccountsState);
   account$: Observable<AccountDto2>;
+  account: AccountDto2;
 
   constructor(private store: Store, private route: ActivatedRoute) {}
 
@@ -22,8 +23,19 @@ export class AccountDetailComponent implements OnInit {
       if (params.id) {
         const id = params.id;
         this.account$ = this.store.select(selectEntityById(id));
+        this.account$.subscribe((account) => {
+          this.account = account;
+        });
         this.store.dispatch(loadAccount({ id }));
       }
     });
+  }
+
+  toggleActiveState(): void {
+    if (this.account.isActive) {
+      this.store.dispatch(deactivateAccount({ accountId: this.account.id }));
+    } else {
+      this.store.dispatch(activateAccount({ accountId: this.account.id }));
+    }
   }
 }

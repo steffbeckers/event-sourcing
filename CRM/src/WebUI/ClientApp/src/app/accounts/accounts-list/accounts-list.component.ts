@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as AccountsActions from '../store/actions/accounts.actions';
-import { selectAccountsState, selectAll } from '../store/selectors/accounts.selectors';
+import { selectAccountsState, selectAllSortedByName } from '../store/selectors/accounts.selectors';
 
 @Component({
   selector: 'app-accounts-list',
@@ -10,7 +10,7 @@ import { selectAccountsState, selectAll } from '../store/selectors/accounts.sele
 })
 export class AccountsListComponent implements OnInit {
   accountsState$ = this.store.select(selectAccountsState);
-  accounts$ = this.store.select(selectAll);
+  accounts$ = this.store.select(selectAllSortedByName);
 
   constructor(private store: Store) {}
 

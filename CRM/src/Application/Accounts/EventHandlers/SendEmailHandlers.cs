@@ -11,6 +11,7 @@ namespace CRM.Application.Accounts.EventHandlers
 {
     public class SendEmailHandlers : 
         INotificationHandler<EventReceived<AccountCreated>>,
+        INotificationHandler<EventReceived<AccountActivated>>,
         INotificationHandler<EventReceived<AccountDeactivated>>
     {
         private readonly ISendGridService _sendGridService;
@@ -29,6 +30,16 @@ namespace CRM.Application.Accounts.EventHandlers
                 email: "steff@steffbeckers.eu",
                 subject: "ES CRM - New account created",
                 htmlMessage: newAccountCreatedEmailTemplate.TransformText()
+            );
+        }
+
+        public async Task Handle(EventReceived<AccountActivated> notification, CancellationToken cancellationToken)
+        {
+            // TODO: This is a test email
+            await _sendGridService.SendEmailAsync(
+                email: "steff@steffbeckers.eu",
+                subject: "ES CRM - Account activated",
+                htmlMessage: notification.Event.Name
             );
         }
 

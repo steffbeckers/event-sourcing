@@ -18,3 +18,17 @@ export const createAccountSuccess = createAction(
   props<{ account: AccountDto2 }>()
 );
 export const createAccountFailure = createAction('[Accounts] Create account Failure', props<any>());
+
+export const activateAccount = createAction('[Accounts] Activate account', props<{ accountId: string }>());
+export const activateAccountSuccess = createAction(
+  '[Accounts] Activate account Success',
+  props<{ accountId: string }>()
+);
+export const activateAccountFailure = createAction('[Accounts] Activate account Failure', props<any>());
+
+export const deactivateAccount = createAction('[Accounts] Deactivate account', props<{ accountId: string }>());
+export const deactivateAccountSuccess = createAction(
+  '[Accounts] Deactivate account Success',
+  props<{ accountId: string }>()
+);
+export const deactivateAccountFailure = createAction('[Accounts] Deactivate account Failure', props<any>());

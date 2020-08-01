@@ -10,6 +10,7 @@
         <th scope="col">Website</th>
         <th scope="col">Email address</th>
         <th scope="col">Phone number</th>
+        <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -23,6 +24,9 @@
         </td>
         <td>
           <a [href]="'tel:' + account.phoneNumber">{{ account.phoneNumber }}</a>
+        </td>
+        <td>
+          <span [routerLink]="account.id + '/edit'">Edit</span>
         </td>
       </tr>
     </tbody>

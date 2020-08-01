@@ -39,11 +39,7 @@ export class AccountsEffects {
       ofType(AccountsActions.createAccount),
       switchMap(({ account }) =>
         this.accountsClient.create(account).pipe(
-          map((accountId: string) => {
-            account.id = accountId;
-            AccountsActions.createAccountSuccess({ account });
-          }),
-          // TODO: catchError is also triggered on success...
+          map(() => AccountsActions.createAccountSuccess({ account })),
           catchError((error) => of(AccountsActions.createAccountFailure(error)))
         )
       )
@@ -51,12 +47,38 @@ export class AccountsEffects {
   );
 
   // TODO: Can't this be combined in the createAccount$ effect? with tap()?
-  navigateAfterCreateAccountSuccess$ = createEffect(() =>
+  navigateAfterCreateAccountSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AccountsActions.createAccountSuccess),
+        tap(({ account }) => {
+          this.router.navigateByUrl('/accounts/' + account.id);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  activateAccount$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(AccountsActions.createAccountSuccess),
-      tap(({ account }) => {
-        this.router.navigateByUrl('/accounts/' + account.id);
-      })
+      ofType(AccountsActions.activateAccount),
+      switchMap(({ accountId }) =>
+        this.accountsClient.activate(accountId).pipe(
+          map(() => AccountsActions.activateAccountSuccess({ accountId })),
+          catchError((error) => of(AccountsActions.activateAccountFailure(error)))
+        )
+      )
+    )
+  );
+
+  deactivateAccount$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AccountsActions.deactivateAccount),
+      switchMap(({ accountId }) =>
+        this.accountsClient.deactivate(accountId).pipe(
+          map(() => AccountsActions.deactivateAccountSuccess({ accountId })),
+          catchError((error) => of(AccountsActions.deactivateAccountFailure(error)))
+        )
+      )
     )
   );
 }

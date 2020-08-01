@@ -9,11 +9,18 @@
     <h1>{{ account.name }}</h1>
     <div class="d-flex align-items-center">
       <div class="form-check mr-4">
-        <input class="form-check-input" type="checkbox" [(ngModel)]="account.isActive" id="accountActive" disabled />
+        <input
+          [checked]="account.isActive"
+          (change)="toggleActiveState()"
+          class="form-check-input"
+          type="checkbox"
+          id="accountActive"
+        />
         <label class="form-check-label" for="accountActive">
           Active
         </label>
       </div>
+      <button type="button" class="btn btn-danger mr-2">Delete</button>
       <button routerLink="edit" type="button" class="btn btn-primary">Edit</button>
     </div>
   </div>

@@ -42,6 +42,16 @@ namespace CRM.Domain.Aggregates
         public bool IsActive { get; private set; }
         public string UserId { get; private set; }
 
+        public void Activate(string userId)
+        {
+            if (this.IsActive)
+            {
+                throw new AccountActivationException(this, $"Account \"{this.Name}\" is already activated.");
+            }
+
+            this.AddEvent(new AccountActivated(this, userId));
+        }
+
         public void Deactivate(string userId)
         {
             if (!this.IsActive)
@@ -64,6 +74,9 @@ namespace CRM.Domain.Aggregates
                     PhoneNumber = account.PhoneNumber;
                     IsActive = account.IsActive;
                     UserId = account.UserId;
+                    break;
+                case AccountActivated account:
+                    IsActive = true;
                     break;
                 case AccountDeactivated account:
                     IsActive = false;

@@ -16,8 +16,9 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 export interface IAccountsClient {
     get(): Observable<AccountDto[]>;
-    create(dto: CreateAccountDto): Observable<string>;
+    create(dto: CreateAccountDto): Observable<FileResponse>;
     getById(id: string): Observable<AccountDto2>;
+    activate(id: string): Observable<FileResponse>;
     deactivate(id: string): Observable<FileResponse>;
 }
 
@@ -86,7 +87,7 @@ export class AccountsClient implements IAccountsClient {
         return _observableOf<AccountDto[]>(<any>null);
     }
 
-    create(dto: CreateAccountDto): Observable<string> {
+    create(dto: CreateAccountDto): Observable<FileResponse> {
         let url_ = this.baseUrl + "/api/Accounts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -98,7 +99,7 @@ export class AccountsClient implements IAccountsClient {
             responseType: "blob",			
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
+                "Accept": "application/octet-stream"
             })
         };
 
@@ -109,33 +110,31 @@ export class AccountsClient implements IAccountsClient {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<FileResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<FileResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<string> {
+    protected processCreate(response: HttpResponseBase): Observable<FileResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<FileResponse>(<any>null);
     }
 
     getById(id: string): Observable<AccountDto2> {
@@ -187,6 +186,55 @@ export class AccountsClient implements IAccountsClient {
             }));
         }
         return _observableOf<AccountDto2>(<any>null);
+    }
+
+    activate(id: string): Observable<FileResponse> {
+        let url_ = this.baseUrl + "/api/Accounts/{id}/activate";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/octet-stream"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processActivate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processActivate(<any>response_);
+                } catch (e) {
+                    return <Observable<FileResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FileResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processActivate(response: HttpResponseBase): Observable<FileResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FileResponse>(<any>null);
     }
 
     deactivate(id: string): Observable<FileResponse> {
@@ -1004,7 +1052,7 @@ export interface IContactDto {
 }
 
 export class CreateAccountDto implements ICreateAccountDto {
-    id?: string | undefined;
+    id?: string;
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;
@@ -1048,7 +1096,7 @@ export class CreateAccountDto implements ICreateAccountDto {
 }
 
 export interface ICreateAccountDto {
-    id?: string | undefined;
+    id?: string;
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;

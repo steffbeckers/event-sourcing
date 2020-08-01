@@ -18,4 +18,8 @@ export const { selectIds, selectEntities, selectAll, selectTotal } = fromAccount
 export const selectEntityById = (id) => createSelector(selectEntities, (entities) => entities[id]);
 export const selectEntitiesById = (ids) => createSelector(selectEntities, (entities) => ids.map((id) => entities[id]));
 
+export const selectAllSortedByName = createSelector(selectAll, (all) =>
+  all.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
+);
+
 export const selectCreateAccountError = createSelector(selectAccountsState, (state) => state.createAccountError);

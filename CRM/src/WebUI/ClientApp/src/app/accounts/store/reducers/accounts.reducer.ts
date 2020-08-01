@@ -53,6 +53,12 @@ export const reducer = createReducer(
     };
   }),
   on(AccountsActions.loadAccountSuccess, (state, { account }) => {
+    if (!account) {
+      return {
+        ...state,
+        loading: false,
+      };
+    }
     return adapter.upsertOne(account, {
       ...state,
       loading: false,
@@ -85,6 +91,62 @@ export const reducer = createReducer(
       ...state,
       loading: false,
       createAccountError: JSON.parse(error.response),
+    };
+  }),
+  // Activate account
+  on(AccountsActions.activateAccount, (state) => {
+    return {
+      ...state,
+      loading: true,
+      error: null,
+    };
+  }),
+  on(AccountsActions.activateAccountSuccess, (state, { accountId }) => {
+    return adapter.updateOne(
+      {
+        id: accountId,
+        changes: {
+          isActive: true,
+        },
+      },
+      {
+        ...state,
+        loading: false,
+      }
+    );
+  }),
+  on(AccountsActions.activateAccountFailure, (state, error) => {
+    return {
+      ...state,
+      loading: false,
+    };
+  }),
+  // Deactivate account
+  on(AccountsActions.deactivateAccount, (state) => {
+    return {
+      ...state,
+      loading: true,
+      error: null,
+    };
+  }),
+  on(AccountsActions.deactivateAccountSuccess, (state, { accountId }) => {
+    return adapter.updateOne(
+      {
+        id: accountId,
+        changes: {
+          isActive: false,
+        },
+      },
+      {
+        ...state,
+        loading: false,
+      }
+    );
+  }),
+  on(AccountsActions.deactivateAccountFailure, (state, error) => {
+    return {
+      ...state,
+      loading: false,
     };
   })
 );
