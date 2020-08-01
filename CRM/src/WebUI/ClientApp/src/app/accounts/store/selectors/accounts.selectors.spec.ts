@@ -4,7 +4,7 @@ import { selectAccountsState } from './accounts.selectors';
 describe('Accounts Selectors', () => {
   it('should select the feature state', () => {
     const result = selectAccountsState({
-      [fromAccounts.accountsFeatureKey]: {}
+      [fromAccounts.accountsFeatureKey]: {},
     });
 
     expect(result).toEqual({});

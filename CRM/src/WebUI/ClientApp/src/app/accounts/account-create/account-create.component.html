@@ -1,0 +1,74 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink="/accounts">Accounts</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Create new account</li>
+  </ol>
+</nav>
+<form [formGroup]="accountForm" #accountFormElement (ngSubmit)="save()" novalidate>
+  <div class="d-flex justify-content-between align-items-center">
+    <h1>Create new account</h1>
+  </div>
+  <div class="form-row">
+    <div class="col">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <!-- <input
+          formControlName="name"
+          type="text"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': (error$ | async)?.errors?.Name }"
+          id="name"
+          placeholder="Name"
+        /> -->
+        <!-- <ng-container *ngIf="error$ | async as error">
+          <div *ngIf="error.errors?.Name" class="text-danger">
+            <small>{{ error.errors.Name }}</small>
+          </div>
+        </ng-container> -->
+        <input
+          formControlName="name"
+          type="text"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': errors && errors['Name'] }"
+          id="name"
+          placeholder="Name"
+        />
+        <div *ngIf="errors && errors['Name']" class="text-danger">
+          <small>{{ errors['Name'] }}</small>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="website">Website</label>
+        <input formControlName="website" type="text" class="form-control" id="website" placeholder="Website" />
+      </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="col">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input formControlName="email" type="email" class="form-control" id="email" placeholder="Email" />
+        <!-- <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Email"> -->
+        <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="phoneNumber">Phone number</label>
+        <input
+          formControlName="phoneNumber"
+          type="text"
+          class="form-control"
+          id="phoneNumber"
+          placeholder="Phone number"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="d-flex">
+    <button [disabled]="accountForm.invalid" type="submit" class="btn btn-block btn-primary mr-2">Save</button>
+    <button type="reset" class="btn btn-secondary">Clear</button>
+  </div>
+</form>

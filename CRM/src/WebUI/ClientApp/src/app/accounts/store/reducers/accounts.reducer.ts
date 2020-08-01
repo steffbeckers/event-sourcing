@@ -9,6 +9,7 @@ export interface State extends EntityState<AccountDto> {
   // additional state property
   loading: boolean;
   error: any;
+  createAccountError: any;
 }
 
 export const adapter: EntityAdapter<AccountDto> = createEntityAdapter<AccountDto>();
@@ -17,10 +18,12 @@ export const initialState: State = adapter.getInitialState({
   // additional entity state properties
   loading: false,
   error: null,
+  createAccountError: null,
 });
 
 export const reducer = createReducer(
   initialState,
+  // Load accounts
   on(AccountsActions.loadAccounts, (state) => {
     return {
       ...state,
@@ -41,6 +44,7 @@ export const reducer = createReducer(
       error,
     };
   }),
+  // Load account
   on(AccountsActions.loadAccount, (state) => {
     return {
       ...state,
@@ -59,6 +63,28 @@ export const reducer = createReducer(
       ...state,
       loading: false,
       error,
+    };
+  }),
+  // Create account
+  on(AccountsActions.createAccount, (state) => {
+    return {
+      ...state,
+      loading: true,
+      error: null,
+      createAccountError: null,
+    };
+  }),
+  on(AccountsActions.createAccountSuccess, (state, { account }) => {
+    return adapter.upsertOne(account, {
+      ...state,
+      loading: false,
+    });
+  }),
+  on(AccountsActions.createAccountFailure, (state, error) => {
+    return {
+      ...state,
+      loading: false,
+      createAccountError: JSON.parse(error.response),
     };
   })
 );

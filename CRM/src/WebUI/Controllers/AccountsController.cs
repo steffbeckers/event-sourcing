@@ -30,7 +30,7 @@ namespace CRM.WebUI.Controllers
         public async Task<ActionResult<Guid>> Create([FromBody] CreateAccountDto dto, CancellationToken cancellationToken = default)
         {
             CreateAccountCommand command = new CreateAccountCommand(
-                Guid.NewGuid(),
+                dto.Id ?? Guid.NewGuid(),
                 dto.Name,
                 dto.Website,
                 dto.Email,

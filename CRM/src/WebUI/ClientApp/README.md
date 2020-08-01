@@ -18,3 +18,4 @@ https://ngrx.io/guide/schematics
 `ng generate component accounts/accounts-list --module accounts/accounts.module.ts`
 `ng generate component accounts/account-detail --module accounts/accounts.module.ts`
 `ng generate component accounts/account-edit --module accounts/accounts.module.ts`
+`ng generate component accounts/account-create --module accounts/accounts.module.ts`

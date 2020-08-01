@@ -17,3 +17,5 @@ export const { selectIds, selectEntities, selectAll, selectTotal } = fromAccount
 // with factory functions
 export const selectEntityById = (id) => createSelector(selectEntities, (entities) => entities[id]);
 export const selectEntitiesById = (ids) => createSelector(selectEntities, (entities) => ids.map((id) => entities[id]));
+
+export const selectCreateAccountError = createSelector(selectAccountsState, (state) => state.createAccountError);

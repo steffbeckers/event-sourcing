@@ -1004,6 +1004,7 @@ export interface IContactDto {
 }
 
 export class CreateAccountDto implements ICreateAccountDto {
+    id?: string | undefined;
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;
@@ -1020,6 +1021,7 @@ export class CreateAccountDto implements ICreateAccountDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.name = _data["name"];
             this.website = _data["website"];
             this.email = _data["email"];
@@ -1036,6 +1038,7 @@ export class CreateAccountDto implements ICreateAccountDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         data["website"] = this.website;
         data["email"] = this.email;
@@ -1045,6 +1048,7 @@ export class CreateAccountDto implements ICreateAccountDto {
 }
 
 export interface ICreateAccountDto {
+    id?: string | undefined;
     name?: string | undefined;
     website?: string | undefined;
     email?: string | undefined;
